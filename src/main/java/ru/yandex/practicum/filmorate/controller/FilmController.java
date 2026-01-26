@@ -15,6 +15,9 @@ import java.util.Map;
 @RequestMapping("/films")
 public class FilmController {
 
+    private static final int MAX_DESCRIPTION_LENGTH = 200;
+    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+
     private final Map<Integer, Film> films = new HashMap<>();
     private int nextId = 1;
 
@@ -51,11 +54,12 @@ public class FilmController {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException("Film name is empty");
         }
-        if (film.getDescription() != null && film.getDescription().length() > 200) {
+        if (film.getDescription() != null
+                && film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             throw new ValidationException("Description is too long");
         }
-        if (film.getReleaseDate() != null &&
-                film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (film.getReleaseDate() != null
+                && film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             throw new ValidationException("Release date is too early");
         }
         if (film.getDuration() <= 0) {
