@@ -25,4 +25,13 @@ public class Film {
     private int duration;
 
     private Set<Integer> likes = new HashSet<>();
+
+    // Проверка даты релиза (не раньше 28.12.1895)
+    @AssertTrue(message = "Дата релиза не может быть раньше 28 декабря 1895 года")
+    public boolean isReleaseDateValid() {
+        if (releaseDate == null) {
+            return false;
+        }
+        return !releaseDate.isBefore(LocalDate.of(1895, 12, 28));
+    }
 }
