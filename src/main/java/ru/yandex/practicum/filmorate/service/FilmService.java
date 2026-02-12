@@ -50,24 +50,20 @@ public class FilmService {
 
     // Ставим лайк
     public void addLike(int filmId, int userId) {
-        Film film = filmStorage.getById(filmId);
-        userStorage.getById(userId);
-
-        film.getLikes().add(userId);
+        userStorage.getById(userId); // проверяем существование пользователя
+        filmStorage.addLike(filmId, userId);
     }
 
     // Удаляем лайк
     public void removeLike(int filmId, int userId) {
-        Film film = filmStorage.getById(filmId);
-        userStorage.getById(userId);
-
-        film.getLikes().remove(userId);
+        userStorage.getById(userId); // проверяем существование пользователя
+        filmStorage.removeLike(filmId, userId);
     }
 
     // Получаем популярные фильмы
     public List<Film> getPopular(int count) {
         return filmStorage.findAll().stream()
-                .sorted(Comparator.comparingInt(f -> -f.getLikes().size()))
+                .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
     }

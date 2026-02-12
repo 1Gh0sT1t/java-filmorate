@@ -20,4 +20,10 @@ public interface FilmStorage {
 
     // Удаляем фильм
     void delete(int id);
+
+    // Добавляем лайк
+    void addLike(int filmId, int userId);
+
+    // Удаляем лайк
+    void removeLike(int filmId, int userId);
 }
