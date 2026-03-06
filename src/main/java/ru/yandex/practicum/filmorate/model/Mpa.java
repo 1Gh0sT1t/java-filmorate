@@ -3,10 +3,10 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
 
 @Data
-public class Genre {
+public class Mpa {
 
     private int id;
 
-    // Название жанра
+    // Код рейтинга (G, PG, PG-13 и т.д.)
     private String name;
 }

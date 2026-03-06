@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 
 import java.util.*;
 
@@ -56,16 +55,8 @@ public class InMemoryUserStorage implements UserStorage {
         User user = getById(id);
         User friend = getById(friendId);
 
-        // Отправитель отправляет запрос
-        user.getFriends().put(friendId, FriendshipStatus.UNCONFIRMED);
-
-// У получателя появляется подтверждённая дружба после согласия
-        if (friend.getFriends().containsKey(id) &&
-                friend.getFriends().get(id) == FriendshipStatus.UNCONFIRMED) {
-
-            user.getFriends().put(friendId, FriendshipStatus.CONFIRMED);
-            friend.getFriends().put(id, FriendshipStatus.CONFIRMED);
-        }
+        user.getFriends().add(friendId);
+        friend.getFriends().add(id);
     }
 
     @Override
@@ -82,10 +73,8 @@ public class InMemoryUserStorage implements UserStorage {
         User user = getById(id);
 
         Set<User> result = new HashSet<>();
-        for (Map.Entry<Integer, FriendshipStatus> entry : user.getFriends().entrySet()) {
-            if (entry.getValue() == FriendshipStatus.CONFIRMED) {
-                result.add(getById(entry.getKey()));
-            }
+        for (Integer friendId : user.getFriends()) {
+            result.add(getById(friendId));
         }
         return result;
     }
@@ -97,13 +86,8 @@ public class InMemoryUserStorage implements UserStorage {
 
         Set<User> result = new HashSet<>();
 
-        for (Map.Entry<Integer, FriendshipStatus> entry : user.getFriends().entrySet()) {
-
-            Integer friendId = entry.getKey();
-
-            if (entry.getValue() == FriendshipStatus.CONFIRMED &&
-                    other.getFriends().get(friendId) == FriendshipStatus.CONFIRMED) {
-
+        for (Integer friendId : user.getFriends()) {
+            if (other.getFriends().contains(friendId)) {
                 result.add(getById(friendId));
             }
         }
