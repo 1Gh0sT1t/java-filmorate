@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
 @AutoConfigureTestDatabase
+@Import(UserDbStorage.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserDbStorageTest {
 

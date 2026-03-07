@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import java.sql.Date;
 import java.util.*;
 
-@Component
+@Repository
 @Primary
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
