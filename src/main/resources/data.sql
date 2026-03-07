@@ -1,11 +1,11 @@
-INSERT INTO mpa_ratings (id, code, description) VALUES
+MERGE INTO mpa_ratings (id, code, description) KEY(id) VALUES
 (1, 'G', 'General audiences'),
 (2, 'PG', 'Parental guidance suggested'),
 (3, 'PG-13', 'Parents strongly cautioned'),
 (4, 'R', 'Restricted'),
 (5, 'NC-17', 'Adults Only');
 
-INSERT INTO genres (id, name) VALUES
+MERGE INTO genres (id, name) KEY(id) VALUES
 (1, 'Комедия'),
 (2, 'Драма'),
 (3, 'Мультфильм'),
