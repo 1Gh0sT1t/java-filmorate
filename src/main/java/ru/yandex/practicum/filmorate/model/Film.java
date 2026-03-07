@@ -31,9 +31,6 @@ public class Film {
     // Список жанров фильма
     private Set<Genre> genres = new HashSet<>();
 
-    // Список пользователей, поставивших лайк
-    private Set<Integer> likes = new HashSet<>();
-
     // Проверяем что дата релиза не раньше появления кино
     @AssertTrue(message = "Дата релиза не может быть раньше 28 декабря 1895 года")
     public boolean isReleaseDateValid() {
