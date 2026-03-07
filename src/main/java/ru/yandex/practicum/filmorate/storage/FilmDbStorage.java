@@ -10,11 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.Date;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @Primary
@@ -103,6 +99,9 @@ public class FilmDbStorage implements FilmStorage {
             // загружаем жанры
             film.setGenres(getGenresByFilmId(film.getId()));
 
+            // загружаем лайки
+            film.setLikes(getLikesByFilmId(film.getId()));
+
             return film;
 
         }, id);
@@ -142,6 +141,9 @@ public class FilmDbStorage implements FilmStorage {
 
             // загружаем жанры
             film.setGenres(getGenresByFilmId(film.getId()));
+
+            // загружаем лайки
+            film.setLikes(getLikesByFilmId(film.getId()));
 
             return film;
 
@@ -195,6 +197,9 @@ public class FilmDbStorage implements FilmStorage {
             // загружаем жанры
             film.setGenres(getGenresByFilmId(film.getId()));
 
+            // загружаем лайки
+            film.setLikes(getLikesByFilmId(film.getId()));
+
             return film;
 
         }, count);
@@ -241,5 +246,11 @@ public class FilmDbStorage implements FilmStorage {
         }, filmId);
 
         return new LinkedHashSet<>(genres);
+    }
+
+    // Новый метод для получения лайков фильма
+    private Set<Integer> getLikesByFilmId(int filmId) {
+        String sql = "SELECT user_id FROM film_likes WHERE film_id = ?";
+        return new HashSet<>(jdbcTemplate.queryForList(sql, Integer.class, filmId));
     }
 }
