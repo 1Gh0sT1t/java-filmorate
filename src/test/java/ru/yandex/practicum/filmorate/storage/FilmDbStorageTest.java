@@ -12,7 +12,9 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,13 +28,13 @@ class FilmDbStorageTest {
     private final FilmDbStorage filmStorage;
     private final UserDbStorage userStorage;
 
+    // Проверяем создание фильма
     @Test
     void shouldCreateFilm() {
-
         Film film = new Film();
         film.setName("Film");
         film.setDescription("Description");
-        film.setReleaseDate(LocalDate.of(2000,1,1));
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
 
         Mpa mpa = new Mpa();
@@ -48,13 +50,13 @@ class FilmDbStorageTest {
         assertThat(fromDb.getName()).isEqualTo("Film");
     }
 
+    // Проверяем обновление фильма
     @Test
     void shouldUpdateFilm() {
-
         Film film = new Film();
         film.setName("Film");
         film.setDescription("Description");
-        film.setReleaseDate(LocalDate.of(2000,1,1));
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
 
         Mpa mpa = new Mpa();
@@ -72,13 +74,13 @@ class FilmDbStorageTest {
         assertThat(updated.getName()).isEqualTo("Updated");
     }
 
+    // Проверяем сохранение жанров фильма
     @Test
     void shouldSaveGenres() {
-
         Film film = new Film();
         film.setName("Film");
         film.setDescription("Description");
-        film.setReleaseDate(LocalDate.of(2000,1,1));
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
 
         Mpa mpa = new Mpa();
@@ -95,18 +97,20 @@ class FilmDbStorageTest {
 
         Film created = filmStorage.create(film);
 
-        Film fromDb = filmStorage.getById(created.getId());
+        Map<Integer, Set<Integer>> genreIdsByFilmId =
+                filmStorage.getGenreIdsByFilmIds(Set.of(created.getId()));
 
-        assertThat(fromDb.getGenres()).hasSize(2);
+        assertThat(genreIdsByFilmId.get(created.getId())).hasSize(2);
+        assertThat(genreIdsByFilmId.get(created.getId())).containsExactly(1, 2);
     }
 
+    // Проверяем добавление лайка
     @Test
     void shouldAddLike() {
-
         Film film = new Film();
         film.setName("Film");
         film.setDescription("Description");
-        film.setReleaseDate(LocalDate.of(2000,1,1));
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
 
         Mpa mpa = new Mpa();
@@ -118,24 +122,26 @@ class FilmDbStorageTest {
         User user = new User();
         user.setEmail("test@test.com");
         user.setLogin("login");
-        user.setBirthday(LocalDate.of(1990,1,1));
+        user.setBirthday(LocalDate.of(1990, 1, 1));
 
         User createdUser = userStorage.create(user);
 
         filmStorage.addLike(createdFilm.getId(), createdUser.getId());
 
-        Film fromDb = filmStorage.getById(createdFilm.getId());
+        Map<Integer, Set<Integer>> likesByFilmId =
+                filmStorage.getLikesByFilmIds(Set.of(createdFilm.getId()));
 
-        assertThat(fromDb.getLikes()).hasSize(1);
+        assertThat(likesByFilmId.get(createdFilm.getId())).hasSize(1);
+        assertThat(likesByFilmId.get(createdFilm.getId())).contains(createdUser.getId());
     }
 
+    // Проверяем удаление лайка
     @Test
     void shouldRemoveLike() {
-
         Film film = new Film();
         film.setName("Film");
         film.setDescription("Description");
-        film.setReleaseDate(LocalDate.of(2000,1,1));
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
         film.setDuration(120);
 
         Mpa mpa = new Mpa();
@@ -147,25 +153,26 @@ class FilmDbStorageTest {
         User user = new User();
         user.setEmail("test@test.com");
         user.setLogin("login");
-        user.setBirthday(LocalDate.of(1990,1,1));
+        user.setBirthday(LocalDate.of(1990, 1, 1));
 
         User createdUser = userStorage.create(user);
 
         filmStorage.addLike(createdFilm.getId(), createdUser.getId());
         filmStorage.removeLike(createdFilm.getId(), createdUser.getId());
 
-        Film fromDb = filmStorage.getById(createdFilm.getId());
+        Map<Integer, Set<Integer>> likesByFilmId =
+                filmStorage.getLikesByFilmIds(Set.of(createdFilm.getId()));
 
-        assertThat(fromDb.getLikes()).isEmpty();
+        assertThat(likesByFilmId.get(createdFilm.getId())).isEmpty();
     }
 
+    // Проверяем получение популярных фильмов
     @Test
     void shouldReturnPopularFilms() {
-
         Film f1 = new Film();
         f1.setName("F1");
         f1.setDescription("d1");
-        f1.setReleaseDate(LocalDate.of(2000,1,1));
+        f1.setReleaseDate(LocalDate.of(2000, 1, 1));
         f1.setDuration(100);
 
         Mpa mpa = new Mpa();
@@ -175,7 +182,7 @@ class FilmDbStorageTest {
         Film f2 = new Film();
         f2.setName("F2");
         f2.setDescription("d2");
-        f2.setReleaseDate(LocalDate.of(2000,1,1));
+        f2.setReleaseDate(LocalDate.of(2000, 1, 1));
         f2.setDuration(100);
         f2.setMpa(mpa);
 
@@ -185,15 +192,15 @@ class FilmDbStorageTest {
         User user = new User();
         user.setEmail("user@test.com");
         user.setLogin("user");
-        user.setBirthday(LocalDate.of(1990,1,1));
+        user.setBirthday(LocalDate.of(1990, 1, 1));
 
         User createdUser = userStorage.create(user);
 
         filmStorage.addLike(film1.getId(), createdUser.getId());
 
-        List<Film> popular = (List<Film>) filmStorage.getPopular(1);
+        Collection<Film> popular = filmStorage.getPopular(1);
 
-        assertThat(popular.get(0).getId()).isEqualTo(film1.getId());
+        assertThat(popular).hasSize(1);
+        assertThat(popular.iterator().next().getId()).isEqualTo(film1.getId());
     }
-
 }

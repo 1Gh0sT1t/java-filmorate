@@ -8,6 +8,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Repository
 @Primary
@@ -43,5 +46,27 @@ public class GenreDbStorage implements GenreStorage {
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Жанр с id " + id + " не найден"));
+    }
+
+    // Получаем жанры сразу по набору id
+    @Override
+    public Map<Integer, Genre> findByIds(Set<Integer> ids) {
+        Map<Integer, Genre> genresById = new LinkedHashMap<>();
+
+        if (ids == null || ids.isEmpty()) {
+            return genresById;
+        }
+
+        String placeholders = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
+        String sql = "SELECT id, name FROM genres WHERE id IN (" + placeholders + ") ORDER BY id";
+
+        jdbcTemplate.query(sql, rs -> {
+            Genre genre = new Genre();
+            genre.setId(rs.getInt("id"));
+            genre.setName(rs.getString("name"));
+            genresById.put(genre.getId(), genre);
+        }, ids.toArray());
+
+        return genresById;
     }
 }
