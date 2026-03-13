@@ -26,4 +26,7 @@ public interface FilmStorage {
 
     // Удаляем лайк
     void removeLike(int filmId, int userId);
+
+    // Получаем список популярных фильмов
+    Collection<Film> getPopular(int count);
 }

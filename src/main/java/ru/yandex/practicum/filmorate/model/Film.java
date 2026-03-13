@@ -24,9 +24,17 @@ public class Film {
     @Positive(message = "Продолжительность должна быть положительной")
     private int duration;
 
+    // Рейтинг MPA фильма
+    @NotNull(message = "Рейтинг MPA обязателен")
+    private Mpa mpa;
+
+    // Список жанров фильма
+    private Set<Genre> genres = new HashSet<>();
+
+    // Лайки пользователей (id пользователей)
     private Set<Integer> likes = new HashSet<>();
 
-    // Проверка даты релиза (не раньше 28.12.1895)
+    // Проверяем что дата релиза не раньше появления кино
     @AssertTrue(message = "Дата релиза не может быть раньше 28 декабря 1895 года")
     public boolean isReleaseDateValid() {
         if (releaseDate == null) {
